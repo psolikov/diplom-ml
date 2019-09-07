@@ -32,6 +32,8 @@ def get_repo(url, n):
     i = 0
     max_commit = None
     max_commit_len = 0
+    min_commit = None
+    min_commit_len = 10e100
     for commit in response_json:
         if (i == n - 1):
             break
@@ -61,6 +63,9 @@ def get_repo(url, n):
         if (files_len_total > max_commit_len):
             max_commit_len = files_len_total
             max_commit = commit
+        if (files_len_total < min_commit_len):
+            min_commit_len = files_len_total
+            min_commit = commit
         i += 1
     contribs_number_result = sorted(contribs_number_commits, key=contribs_number_commits.get, reverse=True)
     if max_commit:
@@ -71,6 +76,14 @@ def get_repo(url, n):
                 print('Max commit length: ' + str(max_commit_len) + ' from ' + max_commit['committer']['name'])
             else:
                 print('No committer for max_commit')
+    if min_commit:
+        if 'committer' in min_commit:
+            if 'login' in min_commit['committer']:
+                print('Min commit length: ' + str(min_commit_len) + ' from ' + min_commit['committer']['login'])
+            elif 'name' in min_commit:
+                print('Min commit length: ' + str(min_commit_len) + ' from ' + min_commit['committer']['name'])
+            else:
+                print('No committer for min_commit')
     print('Contrib statistics:')
     print(contribs_number_commits)
     print(contribs_number_result)
